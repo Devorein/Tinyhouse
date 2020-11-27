@@ -5,18 +5,20 @@
     "apollo-server-express": "^2.19.0",
     "express": "^4.17.1",
     "graphql": "^14.7.0",
+    "lodash.merge": "^4.6.2",
     "mongodb": "^3.6.3"
   },
   "devDependencies": {
-    "@types/dotenv": "^8.2.0",
-    "@types/mongodb": "^3.5.34",
-    "dotenv": "^8.2.0",
     "@types/body-parser": "^1.19.0",
+    "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.9",
     "@types/graphql": "^14.5.0",
+    "@types/lodash.merge": "^4.6.6",
+    "@types/mongodb": "^3.5.34",
     "@types/node": "^14.14.10",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
+    "dotenv": "^8.2.0",
     "eslint": "^7.14.0",
     "nodemon": "^2.0.6",
     "typescript": "^4.1.2"
