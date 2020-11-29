@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { Listings } from "./components";
+
 ReactDOM.render(
-  <React.StrictMode>
-    <div>Hello World</div>
-  </React.StrictMode>,
+  <Listings />,
   document.getElementById('root')
 );
