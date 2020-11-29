@@ -1,7 +1,7 @@
 import React from "react"
 
 import { server } from "../../utils"
-import { ListingsData } from "./types";
+import { DeleteListingsData, DeleteListingsVariables, ListingsData } from "./types";
 
 const LISTINGS = `
   query Listings{
@@ -19,6 +19,14 @@ const LISTINGS = `
   }
 `;
 
+const DELETE_LISTING = `
+  mutation DeleteListing($id: ID!){
+    deleteListing(id: $id){
+      id
+    }
+  }
+`;
+
 interface ListingProps {
   title: string
 }
@@ -29,8 +37,19 @@ export const Listings = ({ title }: ListingProps) => {
     console.log(listings);
   }
 
+  const deleteListing = async () => {
+    const { data } = await server.fetch<DeleteListingsData, DeleteListingsVariables>({
+      query: DELETE_LISTING,
+      variables: {
+        id: "5fc1374b92672214e0bffc9e"
+      }
+    })
+    console.log(data);
+  }
+
   return <div>
     <h2>{title}</h2>
     <button onClick={fetchListings}>Fetch listings</button>
+    <button onClick={deleteListing}>Delete listings</button>
   </div>
 }
