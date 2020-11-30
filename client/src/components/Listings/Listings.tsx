@@ -34,7 +34,7 @@ interface ListingProps {
 
 export const Listings = ({ title }: ListingProps) => {
 
-  const { data } = useQuery<ListingsData>(LISTINGS)
+  const { state, refetch } = useQuery<ListingsData>(LISTINGS)
 
   const deleteListing = async (id: string) => {
     await server.fetch<DeleteListingsData, DeleteListingsVariables>({
@@ -43,10 +43,11 @@ export const Listings = ({ title }: ListingProps) => {
         id
       }
     });
+    refetch()
   }
 
   return <div>
-    {data?.listings ? data.listings.map(listing => {
+    {state?.data ? state.data.listings.map(listing => {
       return <div id={listing.id}>
         <h2>{listing.title}</h2>
         <button onClick={deleteListing.bind(null, listing.id)}>Delete listings</button>
