@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import { server } from "../../utils"
 import { DeleteListingsData, DeleteListingsVariables, Listing, ListingsData } from "./types";
@@ -34,6 +34,10 @@ interface ListingProps {
 export const Listings = ({ title }: ListingProps) => {
   const [listings, setListings] = useState<Listing[] | null>(null);
 
+  useEffect(() => {
+    fetchListings()
+  }, [])
+
   const fetchListings = async () => {
     const listings = await server.fetch<ListingsData>({ query: LISTINGS });
     setListings(listings.data.listings)
@@ -50,7 +54,6 @@ export const Listings = ({ title }: ListingProps) => {
   }
 
   return <div>
-    <button onClick={fetchListings}>Fetch listings</button>
     {listings && listings.map(listing => {
       return <div id={listing.id}>
         <h2>{listing.title}</h2>
