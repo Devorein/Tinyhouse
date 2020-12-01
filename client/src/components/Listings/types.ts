@@ -21,3 +21,7 @@ export interface DeleteListingsData {
 export interface DeleteListingsVariables {
   id: string
 }
+
+export interface ListingProps {
+  title: string
+}

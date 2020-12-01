@@ -2,35 +2,8 @@ import React from "react"
 import { useQuery } from "../../hooks";
 
 import { server } from "../../utils"
-import { DeleteListingsData, DeleteListingsVariables, ListingsData } from "./types";
-
-const LISTINGS = `
-  query Listings{
-    listings{
-      id
-      title
-      image
-      address
-      price
-      numOfGuests
-      numOfBeds
-      numOfBaths
-      rating
-    }
-  }
-`;
-
-const DELETE_LISTING = `
-  mutation DeleteListing($id: ID!){
-    deleteListing(id: $id){
-      id
-    }
-  }
-`;
-
-interface ListingProps {
-  title: string
-}
+import { LISTINGS, DELETE_LISTING } from "./graphql";
+import { DeleteListingsData, DeleteListingsVariables, ListingProps, ListingsData } from "./types";
 
 export const Listings = ({ title }: ListingProps) => {
 
@@ -47,6 +20,7 @@ export const Listings = ({ title }: ListingProps) => {
   }
 
   return <div>
+    <h1>{title}</h1>
     {state?.data ? state.data.listings.map(listing => {
       return <div id={listing.id}>
         <h2>{listing.title}</h2>
