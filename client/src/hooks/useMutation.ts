@@ -2,6 +2,11 @@ import { useState } from "react"
 import { server } from "../utils";
 import { State } from "./types";
 
+type MutationTuple<TData, TVariables> = [
+  ((variables?: TVariables | undefined) => Promise<void>),
+  State<TData>
+]
+
 export const useMutation = <TData = any, TVariables = any>(query: string) => {
   const [state, setState] = useState<State<TData>>({
     data: null,
@@ -38,5 +43,5 @@ export const useMutation = <TData = any, TVariables = any>(query: string) => {
     }
   }
 
-  return [fetch, state]
+  return [fetch, state] as MutationTuple<TData, TVariables>
 }

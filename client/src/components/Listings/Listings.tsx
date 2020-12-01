@@ -1,29 +1,25 @@
 import React from "react"
-import { useQuery } from "../../hooks";
+import { useMutation, useQuery } from "../../hooks";
 
-import { server } from "../../utils"
 import { LISTINGS, DELETE_LISTING } from "./graphql";
 import { DeleteListingsData, DeleteListingsVariables, ListingProps, ListingsData } from "./types";
 
 export const Listings = ({ title }: ListingProps) => {
 
   const { state: { loading, data, error }, refetch } = useQuery<ListingsData>(LISTINGS)
-  const deleteListing = async (id: string) => {
-    await server.fetch<DeleteListingsData, DeleteListingsVariables>({
-      query: DELETE_LISTING,
-      variables: {
-        id
-      }
-    });
-    refetch()
-  }
+  const [deleteListing, { loading: deleteListingLoading, error: deleteListingError }] = useMutation<DeleteListingsData, DeleteListingsVariables>(DELETE_LISTING);
 
   return <div>
     <h1>{title}</h1>
+    {deleteListingLoading ? <div>Deletion in progress</div> : null}
+    {deleteListingError ? <div>Error Deleting listing</div> : null}
     {error ? <div>An unexpected error occurred</div> : loading ? <div>Loading</div> : data ? data.listings.map(listing => {
-      return <div id={listing.id}>
+      return <div key={listing.id}>
         <h2>{listing.title}</h2>
-        <button onClick={deleteListing.bind(null, listing.id)}>Delete listings</button>
+        <button onClick={async () => {
+          await deleteListing({ id: listing.id })
+          refetch();
+        }}>Delete listings</button>
       </div>
     }) : <div>No listings available</div>}
   </div>
