@@ -1,4 +1,6 @@
-export const LISTINGS = `
+import { gql } from "@apollo/client";
+
+export const LISTINGS = gql`
   query Listings{
     listings{
       id
@@ -14,7 +16,7 @@ export const LISTINGS = `
   }
 `;
 
-export const DELETE_LISTING = `
+export const DELETE_LISTING = gql`
   mutation DeleteListing($id: ID!){
     deleteListing(id: $id){
       id

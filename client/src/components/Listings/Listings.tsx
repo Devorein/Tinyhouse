@@ -1,12 +1,12 @@
 import React from "react"
-import { useMutation, useQuery } from "../../hooks";
+import { useMutation, useQuery } from "@apollo/client";
 
 import { LISTINGS, DELETE_LISTING } from "./graphql";
 import { DeleteListingsData, DeleteListingsVariables, ListingProps, ListingsData } from "./types";
 
 export const Listings = ({ title }: ListingProps) => {
 
-  const { state: { loading, data, error }, refetch } = useQuery<ListingsData>(LISTINGS)
+  const { loading, data, error, refetch } = useQuery<ListingsData>(LISTINGS)
   const [deleteListing, { loading: deleteListingLoading, error: deleteListingError }] = useMutation<DeleteListingsData, DeleteListingsVariables>(DELETE_LISTING);
 
   return <div>
@@ -17,7 +17,7 @@ export const Listings = ({ title }: ListingProps) => {
       return <div key={listing.id}>
         <h2>{listing.title}</h2>
         <button onClick={async () => {
-          await deleteListing({ id: listing.id })
+          await deleteListing({ variables: { id: listing.id } })
           refetch();
         }}>Delete listings</button>
       </div>
