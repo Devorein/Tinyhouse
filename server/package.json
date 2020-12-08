@@ -26,6 +26,7 @@
   "scripts": {
     "start": "nodemon build/index.js",
     "build": "tsc -w",
-    "seed": "node build/utils/seed.js"
+    "seed": "node build/utils/seed.js",
+    "clear": "node build/utils/clear.js"
   }
 }
