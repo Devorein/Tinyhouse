@@ -8,6 +8,9 @@ import { AuthUrl } from "../../graphql/queries/__generated__/AuthUrl";
 import { AUTH_URL } from "../../graphql/queries/authurl";
 import { LogIn as LogInData, LogInVariables } from "../../graphql/mutations/__generated__/LogIn";
 import { LOG_IN } from "../../graphql/mutations/Login";
+import { displayErrorMessage, displaySuccessNotification } from "../../utils";
+import { ErrorBanner } from "../Shared";
+import { Redirect } from "react-router-dom";
 
 const { Content } = Layout;
 const { Text, Title } = Typography;
@@ -15,7 +18,12 @@ const { Text, Title } = Typography;
 export const Login = ({ setViewer }: LoginProps) => {
   const client = useApolloClient();
   const [login, { data: login_data, loading: login_loading, error: login_error }] = useMutation<LogInData, LogInVariables>(LOG_IN, {
-    onCompleted: (data) => data.logIn && setViewer(data.logIn)
+    onCompleted: (data) => {
+      if (data.logIn) {
+        setViewer(data.logIn);
+        displaySuccessNotification("You've successfully logged in!");
+      }
+    }
   });
   const loginRef = useRef(login);
 
@@ -26,6 +34,7 @@ export const Login = ({ setViewer }: LoginProps) => {
       })
       window.location.href = authUrl;
     } catch (err) {
+      displayErrorMessage("Something went wrong while trying to log you in :(")
     }
   }
 
@@ -45,7 +54,11 @@ export const Login = ({ setViewer }: LoginProps) => {
       <Spin size="large" tip="Logging you in" />
     </Content>
 
+  if (login_data?.logIn)
+    return <Redirect to={`/user/${login_data.logIn.id}`} />
+
   return <Content className="log-in">
+    {login_error && <ErrorBanner description="Something went wrong while trying to log you in :(" />}
     <Card className="log-in-card">
       <div className="log-in-card__intro">
         <Title level={3} className="log-in-card__intro-title">
