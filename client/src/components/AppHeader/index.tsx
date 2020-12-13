@@ -4,10 +4,11 @@ import { Link } from "react-router-dom";
 
 import logo from "./assets/tinyhouse-logo.png";
 import { MenuItems } from "./MenuItems"
+import { AppHeaderProps } from "./types";
 
 const { Header } = Layout;
 
-export const AppHeader = () => {
+export const AppHeader = ({ viewer }: AppHeaderProps) => {
   return <Header className="app-header">
     <div className="app-header__logo-search-section">
       <div className="app-header__logo">
@@ -17,7 +18,7 @@ export const AppHeader = () => {
       </div>
     </div>
     <div className="app-header__menu-section">
-      <MenuItems />
+      <MenuItems viewer={viewer} />
     </div>
   </Header>
 }
