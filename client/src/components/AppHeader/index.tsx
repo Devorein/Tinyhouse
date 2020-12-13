@@ -8,7 +8,7 @@ import { AppHeaderProps } from "./types";
 
 const { Header } = Layout;
 
-export const AppHeader = ({ viewer }: AppHeaderProps) => {
+export const AppHeader = ({ viewer, setViewer }: AppHeaderProps) => {
   return <Header className="app-header">
     <div className="app-header__logo-search-section">
       <div className="app-header__logo">
@@ -18,7 +18,7 @@ export const AppHeader = ({ viewer }: AppHeaderProps) => {
       </div>
     </div>
     <div className="app-header__menu-section">
-      <MenuItems viewer={viewer} />
+      <MenuItems viewer={viewer} setViewer={setViewer} />
     </div>
   </Header>
 }
