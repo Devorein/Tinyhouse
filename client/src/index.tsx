@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { Layout } from "antd";
+import { Affix, Layout } from "antd";
 
 import "./styles/index.css"
 
-import { Home, Host, Listing, NotFound, User, Login, Listings } from "./components";
+import { Home, Host, Listing, NotFound, User, Login, Listings, AppHeader } from "./components";
 import { Viewer } from './types';
 
 const client = new ApolloClient({
@@ -26,6 +26,9 @@ const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
   return <Router>
     <Layout id="app">
+      <Affix offsetTop={0} className="app__affix-header">
+        <AppHeader />
+      </Affix>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/host" component={Host} />
