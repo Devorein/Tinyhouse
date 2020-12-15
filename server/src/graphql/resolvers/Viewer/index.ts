@@ -1,11 +1,19 @@
 import { IResolvers } from "apollo-server-express";
 import crypto from "crypto";
+import { Response } from "express"
 
 import { Google } from "../../../lib/api";
-import { Database, User, Viewer } from "../../../lib/types";
+import { Context, Database, User, Viewer } from "../../../lib/types";
 import { LogInArgs } from "./types";
 
-const loginViaGoogle = async (code: string, token: string, db: Database): Promise<User> => {
+const cookieOptions = {
+  secure: process.env.NODE_ENV === "development" ? false : true,
+  httpOnly: true,
+  sameSite: true,
+  signed: true
+}
+
+const loginViaGoogle = async (code: string, token: string, db: Database, res: Response): Promise<User> => {
   const { user } = await Google.logIn(code);
   if (!user) {
     throw new Error("Google Login failed")
@@ -47,6 +55,11 @@ const loginViaGoogle = async (code: string, token: string, db: Database): Promis
     viewer = insert_result.ops[0];
   }
 
+  res.cookie("viewer", user_id, {
+    ...cookieOptions,
+    maxAge: 365 * 24 * 60 * 60 * 1000
+  });
+
   return viewer;
 }
 
@@ -61,11 +74,11 @@ export const viewerResolvers: IResolvers = {
     }
   },
   Mutation: {
-    logIn: async (_root: undefined, { input }: LogInArgs, { db }: { db: Database }): Promise<Viewer> => {
+    logIn: async (_root: undefined, { input }: LogInArgs, { db, res }: Context): Promise<Viewer> => {
       try {
         const code = (input && input.code) ?? null;
         const token = crypto.randomBytes(16).toString('hex');
-        const viewer: User | undefined = code ? await loginViaGoogle(code, token, db) : undefined;
+        const viewer: User | undefined = code ? await loginViaGoogle(code, token, db, res) : undefined;
         if (!viewer) {
           return {
             didRequest: true
@@ -78,7 +91,8 @@ export const viewerResolvers: IResolvers = {
         throw new Error(`Failed to login user: ${err}`)
       }
     },
-    logOut: (): Viewer => {
+    logOut: (_root: undefined, _args: {}, { res }: Context): Viewer => {
+      res.clearCookie("viewer", cookieOptions);
       return { didRequest: true }
     }
   },

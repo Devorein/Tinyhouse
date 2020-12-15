@@ -1,4 +1,5 @@
 import { Collection, ObjectId } from "mongodb";
+import { Response, Request } from "express";
 
 export enum ListingType {
   Apartment = "APARTMENT",
@@ -64,4 +65,10 @@ export interface Database {
   listings: Collection<Listing>,
   users: Collection<User>,
   bookings: Collection<Booking>,
+}
+
+export interface Context {
+  db: Database,
+  req: Request,
+  res: Response
 }
