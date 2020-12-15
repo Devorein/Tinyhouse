@@ -1,6 +1,6 @@
 import { IResolvers } from "apollo-server-express";
 import crypto from "crypto";
-import { Response } from "express"
+import { Response, Request } from "express"
 
 import { Google } from "../../../lib/api";
 import { Context, Database, User, Viewer } from "../../../lib/types";
@@ -11,6 +11,22 @@ const cookieOptions = {
   httpOnly: true,
   sameSite: true,
   signed: true
+}
+
+const loginViaCookie = async (token: string, db: Database, req: Request, res: Response): Promise<User | undefined> => {
+  const viewer = await db.users.findOneAndUpdate({
+    _id: req.signedCookies.viewer
+  }, {
+    $set: {
+      token
+    }
+  }, {
+    returnOriginal: false
+  });
+  const { value } = viewer;
+  if (!value)
+    res.clearCookie("viewer", cookieOptions);
+  return value;
 }
 
 const loginViaGoogle = async (code: string, token: string, db: Database, res: Response): Promise<User> => {
@@ -74,11 +90,11 @@ export const viewerResolvers: IResolvers = {
     }
   },
   Mutation: {
-    logIn: async (_root: undefined, { input }: LogInArgs, { db, res }: Context): Promise<Viewer> => {
+    logIn: async (_root: undefined, { input }: LogInArgs, { db, res, req }: Context): Promise<Viewer> => {
       try {
         const code = (input && input.code) ?? null;
         const token = crypto.randomBytes(16).toString('hex');
-        const viewer: User | undefined = code ? await loginViaGoogle(code, token, db, res) : undefined;
+        const viewer: User | undefined = code ? await loginViaGoogle(code, token, db, res) : await loginViaCookie(token, db, req, res);
         if (!viewer) {
           return {
             didRequest: true
@@ -91,7 +107,7 @@ export const viewerResolvers: IResolvers = {
         throw new Error(`Failed to login user: ${err}`)
       }
     },
-    logOut: (_root: undefined, _args: {}, { res }: Context): Viewer => {
+    logOut: (_root: undefined, _args, { res }: Context): Viewer => {
       res.clearCookie("viewer", cookieOptions);
       return { didRequest: true }
     }
