@@ -2,7 +2,7 @@ import React from "react";
 import { Layout } from "antd";
 import { Link } from "react-router-dom";
 
-import logo from "./assets/tinyhouse-logo.png";
+import logo from "../Shared/assets/tinyhouse-logo.png";
 import { MenuItems } from "./MenuItems"
 import { AppHeaderProps } from "./types";
 

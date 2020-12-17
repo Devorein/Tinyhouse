@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import { useMutation, ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 import { Affix, Layout } from "antd";
 
 import "./styles/index.css"
 
 import { Home, Host, Listing, NotFound, User, Login, Listings, AppHeader } from "./components";
 import { Viewer } from './types';
+import { LOG_IN } from './graphql/mutations/Login';
+import { LogIn as LoginData, LogInVariables } from './graphql/mutations/__generated__/LogIn';
 
 const client = new ApolloClient({
   uri: '/api',
@@ -24,6 +26,19 @@ const initialViewer: Viewer = {
 
 const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
+
+  const [login, { error }] = useMutation<LoginData, LogInVariables>(LOG_IN, {
+    onCompleted: (data) => {
+      if (data?.logIn) setViewer(data.logIn)
+    }
+  });
+
+  const loginRef = useRef(login);
+
+  useEffect(() => {
+    loginRef.current();
+  }, [])
+
   return <Router>
     <Layout id="app">
       <Affix offsetTop={0} className="app__affix-header">
