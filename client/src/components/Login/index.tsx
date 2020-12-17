@@ -22,6 +22,7 @@ export const Login = ({ setViewer }: LoginProps) => {
       if (data.logIn) {
         setViewer(data.logIn);
         displaySuccessNotification("You've successfully logged in!");
+        sessionStorage.setItem("token", data.logIn.token ?? "")
       }
     }
   });

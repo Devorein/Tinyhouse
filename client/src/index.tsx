@@ -15,7 +15,10 @@ import { ErrorBanner } from './components/Shared';
 
 const client = new ApolloClient({
   uri: '/api',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  headers: {
+    "X-CSRF-TOKEN": sessionStorage.getItem("token") || ""
+  }
 });
 
 const initialViewer: Viewer = {
@@ -32,7 +35,11 @@ const App = () => {
   const [login, { error }] = useMutation<LoginData, LogInVariables>(LOG_IN, {
     onCompleted: (data) => {
       console.log(data);
-      if (data?.logIn) setViewer(data.logIn)
+      if (data?.logIn) {
+        setViewer(data.logIn)
+        sessionStorage.setItem("token", data.logIn.token ?? '')
+      } else
+        sessionStorage.removeItem("token")
     }
   });
 
