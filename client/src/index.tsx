@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import { useMutation, ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { Affix, Layout } from "antd";
+import { Affix, Layout, Spin } from "antd";
 
 import "./styles/index.css"
 
@@ -10,6 +10,8 @@ import { Home, Host, Listing, NotFound, User, Login, Listings, AppHeader } from 
 import { Viewer } from './types';
 import { LOG_IN } from './graphql/mutations/Login';
 import { LogIn as LoginData, LogInVariables } from './graphql/mutations/__generated__/LogIn';
+import { AppHeaderSkeleton } from './components/AppHeader/Skeleton';
+import { ErrorBanner } from './components/Shared';
 
 const client = new ApolloClient({
   uri: '/api',
@@ -29,6 +31,7 @@ const App = () => {
 
   const [login, { error }] = useMutation<LoginData, LogInVariables>(LOG_IN, {
     onCompleted: (data) => {
+      console.log(data);
       if (data?.logIn) setViewer(data.logIn)
     }
   });
@@ -39,8 +42,20 @@ const App = () => {
     loginRef.current();
   }, [])
 
+  if (!viewer.didRequest && !error) {
+    return <Layout className="app-skeleton">
+      <AppHeaderSkeleton />
+      <div className="app-skeleton__spin-section">
+        <Spin tip="Launching Tinyhouse" size="large" />
+      </div>
+    </Layout>
+  }
+
+  const loginErrorBannerElement = error ? <ErrorBanner description="We weren't able to log you in. Please try again later!" /> : null;
+
   return <Router>
     <Layout id="app">
+      {loginErrorBannerElement}
       <Affix offsetTop={0} className="app__affix-header">
         <AppHeader viewer={viewer} setViewer={setViewer} />
       </Affix>
