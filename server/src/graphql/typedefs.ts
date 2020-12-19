@@ -7,7 +7,7 @@ export const typeDefs = gql`
 
   type Query{
     authUrl: String!
-    user: String!
+    user(id: ID!): User!
   }
 
   type Mutation{
@@ -26,7 +26,7 @@ export const typeDefs = gql`
   }
   
   type Viewer{
-    id: ID
+    id: ID!
     token: String
     avatar: String
     hasWallet: Boolean
@@ -34,7 +34,7 @@ export const typeDefs = gql`
   }
 
   type User{
-    id: String!
+    id: ID!
     name: String!
     avatar: String!
     contact: String!
@@ -42,5 +42,33 @@ export const typeDefs = gql`
     bookings(limit: Int!, page: Int!): Bookings
     listings(limit: Int!, page: Int!): Listings!
     hasWallet: Boolean!
+  }
+
+  enum ListingType{
+    APARTMENT
+    HOUSE
+  }
+
+  type Listing{
+    id: ID!
+    title: String!
+    description: String!
+    image: String!
+    host: User!
+    type: ListingType
+    address: String!
+    city: String!
+    bookings(limit: Int!, page: Int!): Bookings
+    bookingsIndex: String!
+    price: Int!
+    numOfGuests: Int!  
+  }
+
+  type Booking{
+    id: ID!
+    listing: Listing!
+    tenant: User!
+    checkIn: String!
+    checkOut: String!
   }
 `
