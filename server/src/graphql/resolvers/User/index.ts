@@ -2,7 +2,7 @@ import { IResolvers } from "apollo-server-express";
 
 import { Context, User } from "../../../lib/types";
 import { authorize } from "../../../lib/utils";
-import { UserArgs, UserBookingsArgs, UserBookingsData } from "./types";
+import { UserArgs, UserBookingsArgs, UserBookingsData, UserListingsArgs, UserListingsData } from "./types";
 
 export const userResolvers: IResolvers = {
   Query: {
@@ -20,7 +20,25 @@ export const userResolvers: IResolvers = {
   },
   User: {
     id: (user: User) => user._id,
-    listings: () => { },
+    listings: async (user: User, { limit, page }: UserListingsArgs, { db }: Context) => {
+      try {
+        const user_listings_data: UserListingsData = {
+          total: 0,
+          result: []
+        }
+
+        const cursor = await db.listings.find({
+          _id: { $in: user.listings }
+        }).skip(page > 0 ? (page - 1) * limit : 0).limit(limit);
+
+        user_listings_data.total = await cursor.count();
+        user_listings_data.result = await cursor.toArray();
+
+        return user_listings_data;
+      } catch (err) {
+        throw new Error("Failed to query user bookings")
+      }
+    },
     bookings: async (user: User, { limit, page }: UserBookingsArgs, { db }: Context) => {
       try {
         if (!user.authorized) return null;
