@@ -50,7 +50,8 @@ export interface User {
   walletId?: string
   income: number,
   bookings: ObjectId[],
-  listings: ObjectId[]
+  listings: ObjectId[],
+  authorized?: boolean
 }
 
 export interface Booking {
