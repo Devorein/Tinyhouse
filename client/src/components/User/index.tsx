@@ -5,6 +5,8 @@ import { USER } from "../../graphql/queries";
 import { User as UserData, UserVariables } from "../../graphql/queries/__generated__/User";
 import { Col, Row, Layout } from "antd";
 
+import { UserProfile } from "./UserProfile";
+
 const { Content } = Layout;
 
 interface MatchParams {
@@ -19,7 +21,7 @@ export const User = ({ match }: RouteComponentProps<MatchParams>) => {
   });
 
   const user = data?.user;
-  const userProfileElement = user ? <div /> : null;
+  const userProfileElement = user ? <UserProfile user={user} /> : null;
 
   return (
     <Content className="user">
