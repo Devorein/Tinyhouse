@@ -9,7 +9,7 @@
 
 export interface LogOut_logOut {
   __typename: "Viewer";
-  id: string | null;
+  id: string;
   token: string | null;
   avatar: string | null;
   hasWallet: boolean | null;
