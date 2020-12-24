@@ -7,6 +7,8 @@ import { Col, Row, Layout } from "antd";
 
 import { UserProfile } from "./UserProfile";
 import { Viewer } from "../../types";
+import { PageSkeleton } from "../PageSkeleton";
+import { ErrorBanner } from "../Shared";
 
 const { Content } = Layout;
 
@@ -20,6 +22,9 @@ export const User = ({ match }: RouteComponentProps<MatchParams> & { viewer: Vie
       id: match.params.id
     }
   });
+
+  if (loading) return <Content className="user"><PageSkeleton /></Content>
+  if (error) return <Content className="user"><ErrorBanner description="We've encountered an error" /> <PageSkeleton /></Content>;
 
   const user = data?.user;
   const viewerIsUser = user?.id === match.params.id;
