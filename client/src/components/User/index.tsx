@@ -6,6 +6,7 @@ import { User as UserData, UserVariables } from "../../graphql/queries/__generat
 import { Col, Row, Layout } from "antd";
 
 import { UserProfile } from "./UserProfile";
+import { Viewer } from "../../types";
 
 const { Content } = Layout;
 
@@ -13,7 +14,7 @@ interface MatchParams {
   id: string
 }
 
-export const User = ({ match }: RouteComponentProps<MatchParams>) => {
+export const User = ({ match }: RouteComponentProps<MatchParams> & { viewer: Viewer }) => {
   const { data, loading, error } = useQuery<UserData, UserVariables>(USER, {
     variables: {
       id: match.params.id
@@ -21,7 +22,9 @@ export const User = ({ match }: RouteComponentProps<MatchParams>) => {
   });
 
   const user = data?.user;
-  const userProfileElement = user ? <UserProfile user={user} /> : null;
+  const viewerIsUser = user?.id === match.params.id;
+
+  const userProfileElement = user ? <UserProfile user={user} viewerIsUser={viewerIsUser} /> : null;
 
   return (
     <Content className="user">
